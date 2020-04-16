@@ -2,27 +2,35 @@
 We test drive presto using [this docker version](https://hub.docker.com/r/starburstdata/presto)
 
 
+## Dry-run
 
 ```
   make start
+  make inspect
+  make stop 
 ```
 
-This deploys a Presto server listens on port `8080`
+This deploys a Presto server listens on port `8080` and runs a few queries
 
-## Testing
-Load data into Hive:
-```
-  $ docker-compose exec hive-server bash
-  # /opt/hive/bin/beeline -u jdbc:hive2://localhost:10000
-  > CREATE TABLE pokes (foo INT, bar STRING);
-  > LOAD DATA LOCAL INPATH '/opt/hive/examples/files/kv1.txt' OVERWRITE INTO TABLE pokes;
-```
+# TO-DO
 
-Then query it from PrestoDB. You can get [presto.jar](https://prestosql.io/docs/current/installation/cli.html) from PrestoDB website:
-```
-  $ wget https://repo1.maven.org/maven2/io/prestosql/presto-cli/308/presto-cli-308-executable.jar
-  $ mv presto-cli-308-executable.jar presto.jar
-  $ chmod +x presto.jar
-  $ ./presto.jar --server localhost:8080 --catalog hive --schema default
-  presto> select * from pokes;
-```
+- [ ] Add postgres connector - query postgres from presto
+- [ ] Option to run a single presto node, or cluster with 1 coordinator, and n workers
+- [ ] Create imagaes and push to personal docker
+- [ ] circleci
+- [ ] we has clean cluster and can run some real analysis...
+
+
+# References
+
+https://prestodb.io/docs/current/index.html
+
+https://github.com/IBM/docker-prestodb
+
+https://github.com/IBM/presto-db2
+
+Inspirational fork: https://github.com/shawnzhu/docker-prestodb
+
+Docker hive: https://github.com/big-data-europe/docker-hive
+
+Postgres as hive metastore: https://github.com/big-data-europe/docker-hive-metastore-postgresql
