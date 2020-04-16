@@ -2,10 +2,9 @@
 We test drive presto using [this docker version](https://hub.docker.com/r/starburstdata/presto)
 
 
-To run a PrestoDB 0.181 with Hive connector:
 
 ```
-  make start-service
+  make start
 ```
 
 This deploys a Presto server listens on port `8080`

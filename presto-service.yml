@@ -1,64 +1,67 @@
-version: "3"
+version: '3.5'
 
 services:
 
-  namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
-    container_name: namenode
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: portgres
+      POSTGRES_DB: presto_db
     volumes:
-      - namenode:/hadoop/dfs/name
-    environment:
-      - CLUSTER_NAME=test
-    env_file:
-      - ./hadoop-hive.env
+      - data-postgres:/var/lib/postgresql/data
     ports:
-      - "50070:50070"
+      - 172.29.0.2:5432:5432
+    networks:
+      - presto-n
 
-  datanode:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
-    container_name: datanode
-    volumes:
-      - datanode:/hadoop/dfs/data
-    env_file:
-      - ./hadoop-hive.env
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070"
-    ports:
-      - "50075:50075"
-
-  hive-server:
-    image: bde2020/hive:2.3.2-postgresql-metastore
-    container_name: hive-server
-    env_file:
-      - ./hadoop-hive.env
-    environment:
-      HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
-      SERVICE_PRECONDITION: "hive-metastore:9083"
-    ports:
-      - "10000:10000"
-
-  hive-metastore:
-    image: bde2020/hive:2.3.2-postgresql-metastore
-    container_name: hive-metastore
-    env_file:
-      - ./hadoop-hive.env
-    command: /opt/hive/bin/hive --service metastore
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
-    ports:
-      - "9083:9083"
-
-  hive-metastore-postgresql:
-    image: bde2020/hive-metastore-postgresql:2.3.0
-    container_name: hive-metastore-postgresql
-
-  presto-coordinator:
+  presto:
+    depends_on:
+      - postgres
     image: prestosql/presto
     container_name: presto
+    volumes:
+      - ./presto/connectors:/etc/catalog
+      - ./queries:/app/queries
     ports:
-      - "8080:8080"
+      - 8083:8080
+    networks:
+      - presto-n
 
+  presto_w0:
+    depends_on:
+      - postgres
+    image: prestosql/presto
+    container_name: presto_w0
+    volumes:
+      - ./presto/connectors:/etc/catalog
+      - ./queries:/app/queries
+    ports:
+      - 8084:8080
+    networks:
+      - presto-n
+
+  presto_w1:
+    depends_on:
+      - postgres
+    image: prestosql/presto
+    container_name: presto_w1
+    volumes:
+      - ./presto/connectors:/etc/catalog
+      - ./queries:/app/queries
+    ports:
+      - 8084:8080
+    networks:
+      - presto-n
 
 volumes:
-  namenode:
-  datanode:
+  data-presto:
+    driver: local
+  data-postgres:
+    driver: local
+
+networks:
+  presto-n:
+    name: presto-n
+    driver: bridge

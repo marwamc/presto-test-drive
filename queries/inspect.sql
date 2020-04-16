@@ -1,0 +1,7 @@
+SELECT '';
+SHOW CATALOGS;
+SELECT '';
+SHOW SCHEMAS FROM system;
+SELECT 'POSTGRES';
+SHOW SCHEMAS FROM postgresql;
+-- SELECT * FROM pg_catalog.pg_tables
