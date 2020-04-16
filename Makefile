@@ -4,18 +4,26 @@ SHELL := bash
 .SUFFIXES:
 
 # SECTION: VARS
-PROJ_NAME := apicurio-registry
+SERVICE_NAME := presto
+CONTAINER_EXISTS := $(shell docker ps -a --format {{.Image}} | grep ${SERVICE_NAME})
+CGET := curl -H "Content-Type: application/json" http://localhost:8083/ui
 
-SERVICE_IS_RUNNING := $(shell docker ps --format {{.Image}} | grep peg_etl)
-
-# ------------------------------------------------------------------------------------------------------------------
-# SECTION: MANAGE REGISTRY
-start-presto:
-	docker run -d -p 8083:8080 --name presto starburstdata/presto
-
-stop-presto:
-	docker stop presto
 
 # ------------------------------------------------------------------------------------------------------------------
-# SECTION: INSPECT REGISTRY
+# SECTION: MANAGE PRESTO
+
+start-service:
+	docker-compose -f presto-service.yml up
+
+stop-service:
+	docker-compose -f presto-service.yml down
+
+presto-shell:
+	docker exec -it ${SERVICE_NAME} presto --catalog hive
+
+hive-shell:
+	docker exec -it hive-server bash
+
+# ------------------------------------------------------------------------------------------------------------------
+# SECTION: LOAD DATA
 
