@@ -1,0 +1,11 @@
+
+1. Add postgres connector - query postgres from presto
+
+2. Option to run a single presto node, or cluster with 1 coordinator, and
+	n workers
+
+3. Create imagaes and push to personal docker
+
+4. circleci
+
+5. we has clean cluster and can run some real analysis...

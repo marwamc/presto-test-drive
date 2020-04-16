@@ -1,0 +1,67 @@
+version: '3.5'
+
+services:
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: portgres
+      POSTGRES_DB: presto_db
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - presto-n
+
+  presto:
+    depends_on:
+      - postgres
+    image: prestosql/presto
+    container_name: presto
+    volumes:
+      - ./presto/connectors:/etc/catalog
+      - ./queries:/app/queries
+    ports:
+      - 8083:8080
+    networks:
+      - presto-n
+
+  worker0:
+    depends_on:
+      - postgres
+    image: prestosql/presto
+    container_name: worker0
+    volumes:
+      - ./presto/connectors:/etc/catalog
+      - ./queries:/app/queries
+    ports:
+      - 8084:8080
+    networks:
+      - presto-n
+
+  worker1:
+    depends_on:
+      - postgres
+    image: prestosql/presto
+    container_name: worker1
+    volumes:
+      - ./presto/connectors:/etc/catalog
+      - ./queries:/app/queries
+    ports:
+      - 8085:8080
+    networks:
+      - presto-n
+
+volumes:
+  data-presto:
+    driver: local
+  data-postgres:
+    driver: local
+
+networks:
+  presto-n:
+    name: presto-n
+    driver: bridge
