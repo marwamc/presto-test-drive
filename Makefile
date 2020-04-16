@@ -10,9 +10,6 @@ CONTAINER_EXISTS := $(shell docker ps -a --format {{.Image}} | grep ${SERVICE_NA
 
 # ------------------------------------------------------------------------------------------------------------------
 # SECTION: MANAGE PRESTO
-network-show:
-	docker network list
-
 clean:
 	docker system prune -a
 
@@ -28,7 +25,6 @@ shell:
 
 # ------------------------------------------------------------------------------------------------------------------
 # SECTION: QUERIES
-
 inspect:
 	docker exec -it ${SERVICE_NAME} presto --debug -f /app/queries/inspect.sql --output-format JSON
 
@@ -37,8 +33,7 @@ postgres-check:
 	"SELECT * FROM pg_catalog.pg_tables limit 5"
 
 # ------------------------------------------------------------------------------------------------------------------
-# SECTION: DOC
-
+# SECTION: DOCKER
 network-show:
 	docker network list
 	docker network inspect presto-n

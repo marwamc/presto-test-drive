@@ -12,7 +12,7 @@ services:
     volumes:
       - data-postgres:/var/lib/postgresql/data
     ports:
-      - 172.29.0.2:5432:5432
+      - 5432:5432
     networks:
       - presto-n
 
@@ -29,11 +29,11 @@ services:
     networks:
       - presto-n
 
-  presto_w0:
+  worker0:
     depends_on:
       - postgres
     image: prestosql/presto
-    container_name: presto_w0
+    container_name: worker0
     volumes:
       - ./presto/connectors:/etc/catalog
       - ./queries:/app/queries
@@ -42,16 +42,16 @@ services:
     networks:
       - presto-n
 
-  presto_w1:
+  worker1:
     depends_on:
       - postgres
     image: prestosql/presto
-    container_name: presto_w1
+    container_name: worker1
     volumes:
       - ./presto/connectors:/etc/catalog
       - ./queries:/app/queries
     ports:
-      - 8084:8080
+      - 8085:8080
     networks:
       - presto-n
 
