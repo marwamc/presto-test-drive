@@ -16,7 +16,7 @@ This deploys a Presto server listens on port `8080` and runs a few queries
 
 - [ ] Add postgres connector - query postgres from presto
 - [ ] Option to run a single presto node, or cluster with 1 coordinator, and n workers
-- [ ] Create imagaes and push to personal docker
+- [ ] Create images and push to personal docker
 - [ ] circleci
 - [ ] we has clean cluster and can run some real analysis...
 
